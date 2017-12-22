@@ -276,7 +276,7 @@ public class ChatHandler
     @Nullable
     public static String removeAttachmentTextFromMessage(String attachment, String message)
     {
-        if (attachment != null) return attachment;
+        if (attachment != null) return null;
 
         return message;
     }

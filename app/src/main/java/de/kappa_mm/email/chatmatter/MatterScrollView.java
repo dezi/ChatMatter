@@ -72,19 +72,37 @@ public class MatterScrollView extends ScrollView
                     if (inputStream == null) continue;
                     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
+                    ChatFragment cfrag = null;
                     String line;
 
                     while ((line = reader.readLine()) != null)
                     {
-                        ChatFragment cfrag = new ChatFragment(getContext());
+                        String datestring = ChatHandler.getDateStringFromMessage(line);
+                        if (datestring != null) Log.d(LOGTAG, "setContent: datestring=" + datestring);
 
-                        String attachment = LanguageTags.getAttachment(line);
+                        String username = ChatHandler.getUserNameFromMessage(line);
+                        if (username != null) Log.d(LOGTAG, "setContent: username=" + username);
 
+                        line = ChatHandler.removeDateStringAndUserNameFromMessage(datestring, username, line);
+
+                        String attachment = ChatHandler.getAttachmentFromMessage(line);
                         if (attachment != null) Log.d(LOGTAG, "setContent: attachment=" + attachment);
-                        
-                        cfrag.setContent(line, line.length() % 2 == 0);
 
-                        scrollContent.addView(cfrag);
+                        line = ChatHandler.removeAttachmentTextFromMessage(attachment, line);
+
+                        if ((datestring == null) && (username == null) && (cfrag != null))
+                        {
+                            cfrag.addContent(line);
+                        }
+                        else
+                        {
+                            boolean send = (username != null) && (username.equals("Dennis Zierahnowitsch"));
+
+                            cfrag = new ChatFragment(getContext());
+                            cfrag.setContent(send, datestring, username, attachment, line);
+
+                            scrollContent.addView(cfrag);
+                        }
                     }
 
                     reader.close();

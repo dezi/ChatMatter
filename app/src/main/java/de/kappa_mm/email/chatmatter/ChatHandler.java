@@ -18,10 +18,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+@SuppressWarnings("WeakerAccess")
 public class ChatHandler
 {
     private final static String LOGTAG = ChatHandler.class.getSimpleName();
@@ -207,5 +210,74 @@ public class ChatHandler
         }
 
         return null;
+    }
+
+    @Nullable
+    public static String getUserNameFromMessage(String message)
+    {
+        String regex = "[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9], [0-9][0-9]:[0-9][0-9] - (.*): .*";
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(message);
+
+        if (matcher.matches()) return matcher.group(1);
+
+        return null;
+    }
+
+    @Nullable
+    public static String getDateStringFromMessage(String message)
+    {
+        String regex = "([0-9][0-9])\\.([0-9][0-9])\\.([0-9][0-9]), ([0-9][0-9]):([0-9][0-9]) - .*";
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(message);
+
+        if (matcher.matches())
+        {
+            String day = matcher.group(1);
+            String month = matcher.group(2);
+            String year = matcher.group(3);
+            String hour = matcher.group(4);
+            String minute = matcher.group(5);
+
+            if (year.length() == 2) year = "20" + year;
+
+            return year + month + day + hour + minute;
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static String getAttachmentFromMessage(String message)
+    {
+        return LanguageTags.getAttachment(message);
+    }
+
+    @Nullable
+    public static String removeDateStringAndUserNameFromMessage(String datestring, String username, String message)
+    {
+        if (datestring != null)
+        {
+            String regex = (username == null)
+                    ? "[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9], [0-9][0-9]:[0-9][0-9] - (.*)"
+                    : "[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9], [0-9][0-9]:[0-9][0-9] - .*: (.*)";
+
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(message);
+
+            return matcher.matches() ? matcher.group(1) : message;
+        }
+
+        return message;
+    }
+
+    @Nullable
+    public static String removeAttachmentTextFromMessage(String attachment, String message)
+    {
+        if (attachment != null) return attachment;
+
+        return message;
     }
 }

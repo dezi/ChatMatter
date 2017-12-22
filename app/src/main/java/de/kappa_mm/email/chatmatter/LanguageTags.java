@@ -2,13 +2,15 @@ package de.kappa_mm.email.chatmatter;
 
 import android.support.annotation.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.HashMap;
+import java.util.Map;
 
+@SuppressWarnings("WeakerAccess")
 public class LanguageTags
 {
+    @SuppressWarnings("unused")
     private final static String LOGTAG = LanguageTags.class.getSimpleName();
 
     private final static Map<String, String> WASubject;
@@ -156,9 +158,8 @@ public class LanguageTags
 
         for (Map.Entry<String, String> entry : WASubject.entrySet())
         {
-            String value = entry.getValue();
-
-            Pattern pattern = Pattern.compile(value);
+            String regex = entry.getValue();
+            Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(subject);
 
             if (matcher.matches()) return matcher.group(1);
@@ -172,9 +173,8 @@ public class LanguageTags
     {
         for (Map.Entry<String, String> entry : WAAttachment.entrySet())
         {
-            String value = entry.getValue();
-
-            Pattern pattern = Pattern.compile(value);
+            String regex = entry.getValue();
+            Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(message);
 
             if (matcher.matches()) return matcher.group(1);

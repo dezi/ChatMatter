@@ -3,6 +3,7 @@ package de.kappa_mm.email.chatmatter;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -18,6 +19,7 @@ public class MatterScrollView extends ScrollView
     private final static String LOGTAG = MatterScrollView.class.getSimpleName();
 
     private LinearLayout scrollContent;
+    private String chatName;
 
     public MatterScrollView(Context context)
     {
@@ -62,9 +64,11 @@ public class MatterScrollView extends ScrollView
 
             if (uristr.endsWith(".txt"))
             {
+                chatName = ChatHandler.getChatNameFromStorage(getContext(),null, uri);
+
                 try
                 {
-                    InputStream inputStream = IntentUtil.readProtocollFromStorage(getContext(),null, uri);
+                    InputStream inputStream = ChatHandler.readProtocollFromStorage(getContext(),null, uri);
                     if (inputStream == null) continue;
                     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -73,6 +77,11 @@ public class MatterScrollView extends ScrollView
                     while ((line = reader.readLine()) != null)
                     {
                         ChatFragment cfrag = new ChatFragment(getContext());
+
+                        String attachment = LanguageTags.getAttachment(line);
+
+                        if (attachment != null) Log.d(LOGTAG, "setContent: attachment=" + attachment);
+                        
                         cfrag.setContent(line, line.length() % 2 == 0);
 
                         scrollContent.addView(cfrag);
@@ -87,5 +96,11 @@ public class MatterScrollView extends ScrollView
                 }
             }
         }
+    }
+
+    @Nullable
+    public String getChatName()
+    {
+        return chatName;
     }
 }

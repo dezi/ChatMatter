@@ -2,9 +2,7 @@ package de.kappa_mm.email.chatmatter;
 
 import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
-import android.widget.LinearLayout;
 import android.os.Bundle;
-import android.util.Log;
 
 public class MatterActivity extends AppCompatActivity
 {
@@ -23,11 +21,13 @@ public class MatterActivity extends AppCompatActivity
 
         if (! Intent.ACTION_SEND_MULTIPLE.equals(action)) return;
 
-        IntentUtil.writeToStorage(this, intent);
+        ChatHandler.writeToStorage(this, intent);
 
         MatterScrollView scrollView = new MatterScrollView(this);
         scrollView.setContent(intent, null);
 
         setContentView(scrollView);
+
+        setTitle(scrollView.getChatName());
     }
 }

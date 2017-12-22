@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.util.Log;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -23,9 +22,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-public class IntentUtil
+public class ChatHandler
 {
-    private final static String LOGTAG = IntentUtil.class.getSimpleName();
+    private final static String LOGTAG = ChatHandler.class.getSimpleName();
 
     private final static String intentEntry = "intent.marshalled";
 
@@ -76,42 +75,39 @@ public class IntentUtil
 
             for (Object obj : list)
             {
-                if (!(obj instanceof Uri)) continue;
-
-                Uri uri = (Uri) obj;
-                String uristr = uri.getPath();
-                String zipname = uristr.substring(uristr.lastIndexOf("/") + 1);
-
-                try
+                if (obj instanceof Uri)
                 {
-                    InputStream inputStream = context.getContentResolver().openInputStream(uri);
-                    if (inputStream == null) continue;
 
-                    byte data[] = new byte[ 8192 ];
-
-                    BufferedInputStream bufferStream = new BufferedInputStream(inputStream, data.length);
-
-                    entry = new ZipEntry(zipname);
-                    zip.putNextEntry(entry);
-
-                    long total = 0;
-                    int xfer;
-
-                    while ((xfer = bufferStream.read(data, 0, data.length)) != -1)
+                    try
                     {
-                        zip.write(data, 0, xfer);
+                        Uri uri = (Uri) obj;
 
-                        total += xfer;
+                        InputStream inputStream = context.getContentResolver().openInputStream(uri);
+                        if (inputStream == null) continue;
+
+                        String zipname = uri.getLastPathSegment();
+                        entry = new ZipEntry(zipname);
+                        zip.putNextEntry(entry);
+
+                        byte data[] = new byte[8192];
+                        long total = 0;
+                        int xfer;
+
+                        while ((xfer = inputStream.read(data, 0, data.length)) != -1)
+                        {
+                            zip.write(data, 0, xfer);
+
+                            total += xfer;
+                        }
+
+                        Log.d(LOGTAG, "writeToZip: entry=" + zipname + " size=" + total);
+
+                        inputStream.close();
                     }
-
-                    Log.d(LOGTAG, "writeToZip: entry=" + zipname + " size=" + total);
-
-                    bufferStream.close();
-                    inputStream.close();
-                }
-                catch (Exception ex)
-                {
-                    Log.d(LOGTAG, ex.getMessage());
+                    catch (Exception ex)
+                    {
+                        Log.d(LOGTAG, ex.getMessage());
+                    }
                 }
             }
 
@@ -174,11 +170,36 @@ public class IntentUtil
 
             ZipFile zipFile = new ZipFile(zipFilePath);
 
-            Log.d(LOGTAG, "readProtocollFromStorage: protocoll=" + entryuri.getLastPathSegment());
+            String zipName = entryuri.getLastPathSegment();
+
+            Log.d(LOGTAG, "readProtocollFromStorage: protocoll=" + zipName);
+
+            Log.d(LOGTAG, "readProtocollFromStorage: chat=" + LanguageTags.getSubjectChatname(zipName));
 
             ZipEntry entry = zipFile.getEntry(entryuri.getLastPathSegment());
 
             return zipFile.getInputStream(entry);
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static String getChatNameFromStorage(Context context, String zipfile, Uri entryuri)
+    {
+        try
+        {
+            String zipName = entryuri.getLastPathSegment();
+            String chatName = LanguageTags.getSubjectChatname(zipName);
+
+            Log.d(LOGTAG, "getChatNameFromStorage: text=" + zipName);
+            Log.d(LOGTAG, "getChatNameFromStorage: chat=" + chatName);
+
+            return chatName;
         }
         catch (Exception ex)
         {

@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity
 
         Intent intent = new Intent();
 
-        if (! IntentUtil.readIntentFromStorage(this, intent, null)) return;
+        if (! ChatHandler.readIntentFromStorage(this, intent, null)) return;
 
         Log.d(LOGTAG, "onCreate: intent=" + intent.toString());
 
@@ -28,5 +28,7 @@ public class MainActivity extends AppCompatActivity
         scrollView.setContent(intent, null);
 
         setContentView(scrollView);
+
+        setTitle(scrollView.getChatName());
     }
 }

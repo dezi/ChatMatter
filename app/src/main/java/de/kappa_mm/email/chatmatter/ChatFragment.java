@@ -50,17 +50,10 @@ public class ChatFragment extends LinearLayout
 
         recvBubble = new LinearLayout(getContext());
         recvBubble.setOrientation(VERTICAL);
+        recvBubble.setGravity(Gravity.START);
         Simple.setSizeDip(recvBubble, Simple.WC, Simple.WC);
 
         recvPart.addView(recvBubble);
-
-        recvUser = new TextView(getContext());
-        recvUser.setSingleLine(true);
-        Simple.setSizeDip(recvUser, Simple.WC, Simple.WC);
-        Simple.setTextSizeDip(recvUser, 16);
-        Simple.setPaddingDip(recvUser, 8, 0, 8, 0);
-
-        recvBubble.addView(recvUser);
 
         recvBox = new FrameLayout(getContext());
         Simple.setSizeDip(recvBox, Simple.WC, Simple.WC);
@@ -91,17 +84,10 @@ public class ChatFragment extends LinearLayout
 
         sendBubble = new LinearLayout(getContext());
         sendBubble.setOrientation(VERTICAL);
+        sendBubble.setGravity(Gravity.END);
         Simple.setSizeDip(sendBubble, Simple.WC, Simple.WC);
 
         sendPart.addView(sendBubble);
-
-        sendUser = new TextView(getContext());
-        sendUser.setSingleLine(true);
-        Simple.setSizeDip(sendUser, Simple.WC, Simple.WC);
-        Simple.setTextSizeDip(sendUser, 16);
-        Simple.setPaddingDip(sendUser, 8, 0, 8, 0);
-
-        sendBubble.addView(sendUser);
 
         sendBox = new FrameLayout(getContext());
         Simple.setSizeDip(sendBox, Simple.WC, Simple.WC);
@@ -139,7 +125,21 @@ public class ChatFragment extends LinearLayout
             ((LayoutParams) sendPart.getLayoutParams()).weight = 0.25f;
 
             sendBubble.setBackgroundColor(0xffccffcc);
-            sendUser.setText(username);
+
+            if (username != null)
+            {
+                sendUser = new TextView(getContext());
+                sendUser.setSingleLine(true);
+                sendUser.setText(username);
+                Simple.setSizeDip(sendUser, Simple.WC, Simple.WC);
+                Simple.setTextSizeDip(sendUser, 16);
+                Simple.setPaddingDip(sendUser, 8, 0, 8, 0);
+
+                sendBubble.addView(sendUser, 0);
+
+                Simple.setPaddingDip(sendText, 4, 0, 4, 4);
+            }
+
             sendTime.setText(timeTag);
             sendText.setText(message);
         }
@@ -149,7 +149,21 @@ public class ChatFragment extends LinearLayout
             ((LayoutParams) sendPart.getLayoutParams()).weight = 0.75f;
 
             recvBubble.setBackgroundColor(0xffffffff);
-            recvUser.setText(username);
+
+            if (username != null)
+            {
+                recvUser = new TextView(getContext());
+                recvUser.setSingleLine(true);
+                recvUser.setText(username);
+                Simple.setSizeDip(recvUser, Simple.WC, Simple.WC);
+                Simple.setTextSizeDip(recvUser, 16);
+                Simple.setPaddingDip(recvUser, 8, 0, 8, 0);
+
+                recvBubble.addView(recvUser, 0);
+
+                Simple.setPaddingDip(recvText, 4, 0, 4, 4);
+            }
+
             recvTime.setText(timeTag);
             recvText.setText(message);
         }

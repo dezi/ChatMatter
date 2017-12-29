@@ -152,7 +152,8 @@ public class ChatFragment extends LinearLayout
         addView(centerBox);
 
         bubbleBox = new FrameLayout(getContext());
-        bubbleBox.setBackgroundColor(0xffccffff);
+        bubbleBox.setBackgroundColor(0xffbbddff);
+        bubbleBox.setBackgroundColor(0xffffeebb);
         Simple.setSizeDip(bubbleBox, Simple.WC, Simple.WC);
         Simple.setPaddingDip(bubbleBox, 4);
         Simple.setMarginDip(bubbleBox, 40, 0, 40, 0);
@@ -160,6 +161,7 @@ public class ChatFragment extends LinearLayout
         centerBox.addView(bubbleBox);
 
         messageBox = new TextView(getContext());
+        messageBox.setGravity(Gravity.CENTER_HORIZONTAL);
         Simple.setSizeDip(messageBox, Simple.WC, Simple.WC);
         Simple.setTextSizeDip(messageBox, 22);
 

@@ -215,7 +215,7 @@ public class ChatHandler
     @Nullable
     public static String getUserNameFromMessage(String message)
     {
-        String regex = "[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9], [0-9][0-9]:[0-9][0-9] - (.*): .*";
+        String regex = "[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9], [0-9][0-9]:[0-9][0-9] - (.*?): .*";
 
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(message);
@@ -261,8 +261,8 @@ public class ChatHandler
         if (datestring != null)
         {
             String regex = (username == null)
-                    ? "[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9], [0-9][0-9]:[0-9][0-9] - (.*)"
-                    : "[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9], [0-9][0-9]:[0-9][0-9] - .*: (.*)";
+                    ? "[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9], [0-9][0-9]:[0-9][0-9] - (.*?)"
+                    : "[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9], [0-9][0-9]:[0-9][0-9] - .*?: (.*)";
 
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(message);

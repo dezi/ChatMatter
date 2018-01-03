@@ -7,24 +7,46 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.view.Gravity;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@SuppressWarnings("WeakerAccess")
 public class ChatFragment extends LinearLayout
 {
     private final static String LOGTAG = ChatFragment.class.getSimpleName();
 
     private final static String ENDINDENT = "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0";
 
-    private LinearLayout recvPart;
-    private LinearLayout sendPart;
-    private FrameLayout bubbleBox;
-    private LinearLayout contentBox;
-    private TextView userBox;
-    private TextView attachmentBox;
-    private TextView messageBox;
-    private TextView timeBox;
+    private final static int[] userColors =
+            {
+                    //  0xff0000ff,
+                    0xffff0000,
+                    0xff800000,
+                    //  0xffffff00,
+                    0xff808000,
+                    0xff00ff00,
+                    0xff008000,
+                    0xff00ffff,
+                    0xff008080,
+                    0xff0000ff,
+                    0xff000080,
+                    0xffff00ff,
+                    0xff800080
+            };
 
-    public ChatFragment(Context context)
+    private static final int SENDUSERCOLOR = 0xff0000ff;
+
+    private final static Map<String, Integer> users2Colors = new HashMap<>();
+
+    private FrameLayout bubbleBox;
+    private TextView messageBox;
+    private Chat chat;
+
+    public ChatFragment(Context context, Chat chat)
     {
         super(context);
+
+        this.chat = chat;
 
         setOrientation(HORIZONTAL);
         setLayoutParams(new LayoutParams(Simple.MP, Simple.WC));
@@ -43,20 +65,20 @@ public class ChatFragment extends LinearLayout
         }
     }
 
-    public void setContentMessage(boolean send, String datestring, String username, String attachment, String message)
+    private void setContentMessage(boolean send, String datestring, String username, String attachment, String message)
     {
         if (message != null) message += ENDINDENT;
 
         String timeTag = ((datestring == null) || (datestring.length() < 12)) ? null
                 : datestring.substring(8, 10) + ":" + datestring.substring(10, 12);
 
-        recvPart = new LinearLayout(getContext());
+        LinearLayout recvPart = new LinearLayout(getContext());
         recvPart.setOrientation(VERTICAL);
         recvPart.setGravity(Gravity.START);
 
         addView(recvPart);
 
-        sendPart = new LinearLayout(getContext());
+        LinearLayout sendPart = new LinearLayout(getContext());
         sendPart.setOrientation(VERTICAL);
         sendPart.setGravity(Gravity.END);
 
@@ -66,9 +88,9 @@ public class ChatFragment extends LinearLayout
         ((LayoutParams) sendPart.getLayoutParams()).weight = send ? 0.25f : 0.75f;
 
         bubbleBox = new FrameLayout(getContext());
-        bubbleBox.setBackgroundColor(send ? 0xffccffcc : 0xffffffff);
         Simple.setSizeDip(bubbleBox, Simple.WC, Simple.WC);
         Simple.setPaddingDip(bubbleBox, 4);
+        Simple.setRoundedCorners(bubbleBox, 8, send ? 0xffccffcc : 0xffffffff, true);
 
         if (send)
         {
@@ -79,7 +101,7 @@ public class ChatFragment extends LinearLayout
             recvPart.addView(bubbleBox);
         }
 
-        contentBox = new LinearLayout(getContext());
+        LinearLayout contentBox = new LinearLayout(getContext());
         contentBox.setOrientation(VERTICAL);
         contentBox.setGravity(send ? Gravity.END : Gravity.START);
         Simple.setSizeDip(contentBox, Simple.WC, Simple.WC);
@@ -88,9 +110,24 @@ public class ChatFragment extends LinearLayout
 
         if (username != null)
         {
-            userBox = new TextView(getContext());
+            Integer color = SENDUSERCOLOR;
+
+            if (! send)
+            {
+                color = users2Colors.get(username);
+
+                if (color == null)
+                {
+                    color = userColors[users2Colors.size() % userColors.length];
+
+                    users2Colors.put(username, color);
+                }
+            }
+
+            TextView userBox = new TextView(getContext());
             userBox.setSingleLine(true);
             userBox.setText(username);
+            userBox.setTextColor(color);
             Simple.setSizeDip(userBox, Simple.WC, Simple.WC);
             Simple.setTextSizeDip(userBox, 16);
 
@@ -99,7 +136,7 @@ public class ChatFragment extends LinearLayout
 
         if (attachment != null)
         {
-            attachmentBox = new TextView(getContext());
+            TextView attachmentBox = new TextView(getContext());
             attachmentBox.setSingleLine(true);
             attachmentBox.setText(attachment);
             attachmentBox.setBackgroundColor(0xccccccff);
@@ -130,7 +167,7 @@ public class ChatFragment extends LinearLayout
 
         if (timeTag != null)
         {
-            timeBox = new TextView(getContext());
+            TextView timeBox = new TextView(getContext());
             timeBox.setSingleLine(true);
             Simple.setTextSizeDip(timeBox, 12);
 
@@ -145,6 +182,8 @@ public class ChatFragment extends LinearLayout
 
     public void setContentInfo(String message)
     {
+        int mtype = LanguageTags.getMessageType(message);
+
         RelativeLayout centerBox = new RelativeLayout(getContext());
         centerBox.setGravity(Gravity.CENTER);
         Simple.setSizeDip(centerBox, Simple.MP, Simple.WC);
@@ -152,8 +191,9 @@ public class ChatFragment extends LinearLayout
         addView(centerBox);
 
         bubbleBox = new FrameLayout(getContext());
-        bubbleBox.setBackgroundColor(0xffbbddff);
-        bubbleBox.setBackgroundColor(0xffffeebb);
+
+        Simple.setRoundedCorners(bubbleBox, 8, (mtype == LanguageTags.TYPE_SYSTEM) ? 0xffffeebb : 0xffbbddff, true);
+
         Simple.setSizeDip(bubbleBox, Simple.WC, Simple.WC);
         Simple.setPaddingDip(bubbleBox, 4);
         Simple.setMarginDip(bubbleBox, 40, 0, 40, 0);
@@ -181,7 +221,7 @@ public class ChatFragment extends LinearLayout
                 oldmess = oldmess.substring(0, oldmess.length() - ENDINDENT.length());
             }
 
-            String newmess = oldmess + (oldmess.equals("") ? "" : "\n") + message + ENDINDENT;
+            String newmess = oldmess + (oldmess.equals("") ? "" : "\n") + ">>" + message + ENDINDENT;
 
             Simple.setTextSizeDip(messageBox, 22);
             messageBox.setText(newmess);

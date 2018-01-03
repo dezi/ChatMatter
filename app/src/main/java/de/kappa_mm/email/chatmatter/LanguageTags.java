@@ -1,6 +1,7 @@
 package de.kappa_mm.email.chatmatter;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,9 +14,14 @@ public class LanguageTags
     @SuppressWarnings("unused")
     private final static String LOGTAG = LanguageTags.class.getSimpleName();
 
+    public final static int TYPE_NORMAL = 0;
+    public final static int TYPE_SYSTEM = 1;
+    public final static int TYPE_ACTION = 2;
+
     private final static Map<String, String> WASubject;
     private final static Map<String, String> WAAttachment;
     private final static Map<String, String> WAGroupInfoEncrypted;
+    private final static Map<String, String> WAGroupInfoEncryptedStateChanged;
 
     static
     {
@@ -216,6 +222,72 @@ public class LanguageTags
         WAGroupInfoEncrypted.put("zh-rHK", "此群組中的訊息和通話進行了端對端的加密，點擊獲取更多資訊。");
         WAGroupInfoEncrypted.put("zh-rSG", "此群组中的信息进行了端到端的加密，点击获取更多信息。");
         WAGroupInfoEncrypted.put("zh-rTW", "此群組中的訊息和通話進行了端對端的加密，點擊獲取更多資訊。");
+
+        WAGroupInfoEncryptedStateChanged = new HashMap<>();
+
+        WAGroupInfoEncryptedStateChanged.put("", "Messages to this group are now secured with end-to-end encryption. Tap for more info.");
+        WAGroupInfoEncryptedStateChanged.put("af", "Boodskappe aan hierdie groep word nou beveilig met end-tot-end enkripsie. Tik vir meer inligting.");
+        WAGroupInfoEncryptedStateChanged.put("ar", "باتت الرسائل التي ترسلها إلى هذه المجموعة محمية من خلال التشفير التام. انقر للمزيد من المعلومات.");
+        WAGroupInfoEncryptedStateChanged.put("az", "Bu qrupa göndərdiyiniz ismarıclar artıq bir başdan digərinə qədər şifrələnir. Ətraflı məlumat üçün toxunun.");
+        WAGroupInfoEncryptedStateChanged.put("bg", "Съобщенията, които изпращате към тази група, вече са подсигурени с криптиране от край до край. Натиснете за повече информация.");
+        WAGroupInfoEncryptedStateChanged.put("bn", "এই গোষ্ঠীর বার্তাগুলো দুই দিক থেকে এনক্রিপশানের মাধ্যমে নিরাপদ। আরও তথ্যের জন্য আলতো চাপুন।");
+        WAGroupInfoEncryptedStateChanged.put("ca", "Els missatges d\'aquest grup estan ara assegurats amb encriptació d\'extrem a extrem. Prem aquí per més informació.");
+        WAGroupInfoEncryptedStateChanged.put("cs", "Zprávy pro tuto skupinu jsou teď zabezpečeny koncovým šifrováním. Další informace zobrazíte klepnutím.");
+        WAGroupInfoEncryptedStateChanged.put("da", "Beskeder til denne gruppe er nu sikret med kryptering. Tryk for mere info.");
+        WAGroupInfoEncryptedStateChanged.put("de", "Nachrichten an diese Gruppe sind jetzt mit Ende-zu-Ende-Verschlüsselung geschützt. Tippe für mehr Infos.");
+        WAGroupInfoEncryptedStateChanged.put("el", "Τα μηνύματα προς αυτήν την ομάδα είναι τώρα ασφαλή με κρυπτογράφηση. Πατήστε για πληροφορίες.");
+        WAGroupInfoEncryptedStateChanged.put("es", "Los mensajes en este grupo ahora están protegidos con cifrado de extremo a extremo. Toca para más información.");
+        WAGroupInfoEncryptedStateChanged.put("et", "Selle grupi sõnumid on nüüd kaitstud otsast otsani krüpteerimisega. Toksa rohkema info saamiseks.");
+        WAGroupInfoEncryptedStateChanged.put("fa", "‏پیام ها به این گروه هم اکنون با رمزگذاری سرتاسری محفوظ شده اند. برای اطلاعات بیشتر اینجا بزنید.");
+        WAGroupInfoEncryptedStateChanged.put("fi", "Viestit tähän ryhmään salataan nyt täysin. Napauta saadaksesi lisätietoja.");
+        WAGroupInfoEncryptedStateChanged.put("fr", "Les messages envoyés dans ce groupe sont désormais protégés avec le chiffrement de bout en bout. Appuyez pour plus d\'informations.");
+        WAGroupInfoEncryptedStateChanged.put("gu", "આ સમૂહના સંદેશાઓ હવે શરૂઆતથી અંત સુધી ગુપ્તીકરણ દ્વારા સુરક્ષિત છે. વધુ માહિતી માટે ટેપ કરો.");
+        WAGroupInfoEncryptedStateChanged.put("he", "כעת ההודעות הנשלחות בקבוצה זו מאובטחות עם הצפנה מקצה לקצה. הקש/י למידע נוסף.");
+        WAGroupInfoEncryptedStateChanged.put("hi", "इस समूह में भेजे गए संदेश शुरू से अंत तक एन्क्रिप्शन से सुरक्षित हैं. अधिक जानकारी के लिए टैप करें.");
+        WAGroupInfoEncryptedStateChanged.put("hi-v16", "इस समूह में भेजे गए संदेश शुरू से अंत तक एन्क्रिप्शन से सुरक्षित हैं. अधिक जानकारी के लिए टैप करें.");
+        WAGroupInfoEncryptedStateChanged.put("hr", "Poruke poslane na ovu grupu sad su osigurane end-to-end metodom šifriranja. Dotaknite za više informacija.");
+        WAGroupInfoEncryptedStateChanged.put("hu", "Az ebben a csoportban lévő üzenetek titkosítottak a végpontok között. Koppints további információkért.");
+        WAGroupInfoEncryptedStateChanged.put("id", "Pesan-pesan yang dikirim ke grup ini kini diamankan dengan enkripsi end-to-end. Ketuk untuk info selengkapnya.");
+        WAGroupInfoEncryptedStateChanged.put("in", "Pesan-pesan yang dikirim ke grup ini kini diamankan dengan enkripsi end-to-end. Ketuk untuk info selengkapnya.");
+        WAGroupInfoEncryptedStateChanged.put("it", "I messaggi inviati a questo gruppo sono ora protetti con la crittografia end-to-end. Tocca per maggiori info.");
+        WAGroupInfoEncryptedStateChanged.put("iw", "כעת ההודעות הנשלחות בקבוצה זו מאובטחות עם הצפנה מקצה לקצה. הקש/י למידע נוסף.");
+        WAGroupInfoEncryptedStateChanged.put("ja", "このグループへのメッセージは、エンドツーエンドの暗号化で保護されています。詳細を見るにはタップしてください。");
+        WAGroupInfoEncryptedStateChanged.put("kk", "Осы топқа жөнелтілген хаттар толығымен шифрлау арқылы қауіпсіз етілді. Толық ақпарат үшін басыңыз.");
+        WAGroupInfoEncryptedStateChanged.put("kn", "ಈ ಗುಂಪಿಗೆ ಸಂದೇಶಗಳು ಈಗ ಕೊನೆಯಿಂದ-ಕೊನೆವರೆಗೆ ಏನ್ಕ್ರಿಪ್ಷನ್ ನಿಂದ ಭದ್ರಪಡಿಸಲ್ಪಟ್ಟಿವೆ. ಹೆಚ್ಚಿನ ಮಾಹಿತಿಗಾಗಿ ತಟ್ಟಿ.");
+        WAGroupInfoEncryptedStateChanged.put("ko", "이 그룹의 메시지는 이제 종단간 암호화되어 안전합니다. 더 많은 정보를 보려면 탭하세요.");
+        WAGroupInfoEncryptedStateChanged.put("lt", "Žinutės į šią grupę dabar yra apsaugotos ištisiniu šifravimu. Bakstelėkite daugiau info.");
+        WAGroupInfoEncryptedStateChanged.put("lv", "Ziņas šajā grupā tagad ir aizsargātas ar pilnīgu šifrēšanu. Pieskarieties, lai uzzinātu vairāk.");
+        WAGroupInfoEncryptedStateChanged.put("mk", "Пораките до оваа група сега се обезбедени со шифрирање крај-до-крај. Притисни за повеќе инфо.");
+        WAGroupInfoEncryptedStateChanged.put("ml", "ഈ ഗ്രൂപ്പിലേക്കുള്ള സന്ദേശങ്ങൾ ഇപ്പോൾ ആദ്യാവസാന എൻക്രിപ്ഷൻ വഴി സുരക്ഷിതമാണ്. കൂടുതൽ വിവരങ്ങൾക്ക് സ്പർശിക്കൂ.");
+        WAGroupInfoEncryptedStateChanged.put("mr", "या गटामधील संदेश आता संपूर्णपणे कूटबद्ध करून सुरक्षित केलेले आहेत. अधिक माहितीसाठी टॅप करा.");
+        WAGroupInfoEncryptedStateChanged.put("ms", "Mesej-mesej ke grup ini kini selamat dengan penyulitan hujung ke hujung. Ketik untuk lebih info.");
+        WAGroupInfoEncryptedStateChanged.put("nb-rNO", "Meldinger til denne gruppen er nå kryptert fra ende til ende. Trykk for mer informasjon.");
+        WAGroupInfoEncryptedStateChanged.put("nl", "Berichten die naar deze groep worden verzonden, zijn nu beveiligd met end-to-end encryptie. Tik voor meer informatie.");
+        WAGroupInfoEncryptedStateChanged.put("pa", "ਇਹ ਗਰੁੱਪ ਲਈ ਸੁਨੇਹੇ ਹੁਣ ਸਿਰੇ ਤੋਂ ਸਿਰੇ ਤੱਕ ਇੰਕ੍ਰਿਪਸ਼ਨ ਨਾਲ ਸੁਰੱਖਿਅਤ ਕੀਤੇ ਹਨ। ਹੋਰ ਜਾਣਕਾਰੀ ਲਈ ਟੈਪ ਕਰੋ।");
+        WAGroupInfoEncryptedStateChanged.put("pl", "Wiadomości do tej grupy są teraz zabezpieczone przez pełne szyfrowanie. Więcej informacji tutaj.");
+        WAGroupInfoEncryptedStateChanged.put("pt", "As mensagens que enviar a este grupo passarão a ser completamente encriptadas. Toque para saber mais.");
+        WAGroupInfoEncryptedStateChanged.put("pt-rBR", "As mensagens enviadas a este grupo estão agora protegidas com a criptografia de ponta-a-ponta. Toque para obter mais informações.");
+        WAGroupInfoEncryptedStateChanged.put("ro", "Mesajele către acest grup sunt acum securizate prin criptare integrală. Apăsați pentru mai multe detalii.");
+        WAGroupInfoEncryptedStateChanged.put("ru", "Сообщения в данной группе теперь защищены сквозным шифрованием. Узнать больше.");
+        WAGroupInfoEncryptedStateChanged.put("sk", "Správy pre túto skupinu sú teraz zabezpečené šifrovaním počas celého spojenia. Viac informácií zobrazíte klepnutím.");
+        WAGroupInfoEncryptedStateChanged.put("sl", "Sporočila v tej skupini so sedaj zavarovana s šifriranjem od konca do konca. Pritisnite za več informacij.");
+        WAGroupInfoEncryptedStateChanged.put("sq", "Mesazhet që i shkëmbeni në këtë grup janë tani të koduara fund-e-krye. Prekni këtu për më shumë informata.");
+        WAGroupInfoEncryptedStateChanged.put("sr", "Поруке ка овој групи су сада обезбеђене са шифровањем од почетка-до-краја. Додирни за више информација.");
+        WAGroupInfoEncryptedStateChanged.put("sv", "Meddelanden till denna grupp är nu säkrade med komplett kryptering. Tryck för mer info.");
+        WAGroupInfoEncryptedStateChanged.put("sw", "Jumbe kwenye kikundi hiki sasa zipo salama kwa ufumbaji wa mwisho-kwa-mwisho. Gusa kwa maelezo zaidi.");
+        WAGroupInfoEncryptedStateChanged.put("ta", "இக்குழுவிற்கு தாங்கள் அனுப்பும் தகவல்கள் முழு மறையாக்கத்துடன் பாதுகாக்கப்படுகிறது. விவரத்திற்கு தட்டுக.");
+        WAGroupInfoEncryptedStateChanged.put("te", "ఈ వర్గానికి సందేశాలు ఇప్పుడు ఎండ్ టు ఎండ్ ఎన్క్రిప్షన్ తో సురక్షితం ఉంటాయి. మరింత సమాచారం కోసం నొక్కండి.");
+        WAGroupInfoEncryptedStateChanged.put("th", "ข้อความที่คุณส่งถึงกลุ่มนี้ขณะนี้มีความปลอดภัยด้วยการเข้ารหัสจากต้นทางถึงปลายทาง แตะสำหรับข้อมูลเพิ่มเติม");
+        WAGroupInfoEncryptedStateChanged.put("tl", "Ang mensahe sa grupong ito ay secured na, gamit ang end-to-end encryption. I-tap para sa dagdag na info.");
+        WAGroupInfoEncryptedStateChanged.put("tr", "Bu gruba gönderdiğiniz mesajlar artık uçtan uca şifreleme ile korunmaktadır. Daha fazla bilgi için dokunun.");
+        WAGroupInfoEncryptedStateChanged.put("uk", "Повідомлення у цій групі тепер захищено наскрізним шифруванням. Натисніть, щоб дізнатися більше.");
+        WAGroupInfoEncryptedStateChanged.put("ur", "اس گروپ کے پیغامات اب شروع سے آخر تک رمزکاری کے ذریعے محفوظ ہیں۔ مزید معلومات کے لیے ٹیپ کریں۔");
+        WAGroupInfoEncryptedStateChanged.put("uz", "Ushbu guruhdagi xabarlar endi boshidan oxirigacha shifrlash bilan himoyalanadi. Batafsil ma’lumot uchun bosing.");
+        WAGroupInfoEncryptedStateChanged.put("vi", "Những tin nhắn gửi tới nhóm này được bảo mật với mã hoá đầu-cuối. Nhấn để biết thêm thông tin.");
+        WAGroupInfoEncryptedStateChanged.put("zh-rCN", "此群组中的信息已进行端到端的加密，点击获取更多信息。");
+        WAGroupInfoEncryptedStateChanged.put("zh-rHK", "此群組中的訊息已進行端對端的加密，點擊獲取更多資訊。");
+        WAGroupInfoEncryptedStateChanged.put("zh-rSG", "此群组中的信息已进行端到端的加密，点击获取更多信息。");
+        WAGroupInfoEncryptedStateChanged.put("zh-rTW", "此群組中的訊息已進行端對端的加密，點擊獲取更多資訊。");
     }
 
     @Nullable
@@ -248,5 +320,36 @@ public class LanguageTags
         }
 
         return null;
+    }
+
+    public static int getMessageType(String message)
+    {
+        for (Map.Entry<String, String> entry : WAGroupInfoEncrypted.entrySet())
+        {
+            String sample = entry.getValue();
+
+            if (entry.getKey().equals("de"))
+            {
+                Log.d(LOGTAG, "##### m=" + message);
+                Log.d(LOGTAG, "##### t=" + sample);
+            }
+
+            if (sample.equals(message)) return TYPE_SYSTEM;
+        }
+
+        for (Map.Entry<String, String> entry : WAGroupInfoEncryptedStateChanged.entrySet())
+        {
+            String sample = entry.getValue();
+
+            if (entry.getKey().equals("de"))
+            {
+                Log.d(LOGTAG, "##### m=" + message);
+                Log.d(LOGTAG, "##### t=" + sample);
+            }
+
+            if (sample.equals(message)) return TYPE_SYSTEM;
+        }
+
+        return TYPE_NORMAL;
     }
 }

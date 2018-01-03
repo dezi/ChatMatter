@@ -20,6 +20,7 @@ public class MatterScrollView extends ScrollView
 
     private LinearLayout scrollContent;
     private String chatName;
+    private Chat chat;
 
     public MatterScrollView(Context context)
     {
@@ -66,6 +67,8 @@ public class MatterScrollView extends ScrollView
             {
                 chatName = ChatHandler.getChatNameFromStorage(getContext(),null, uri);
 
+                chat = new Chat(chatName);
+
                 try
                 {
                     InputStream inputStream = ChatHandler.readProtocollFromStorage(getContext(),null, uri);
@@ -96,9 +99,25 @@ public class MatterScrollView extends ScrollView
                         }
                         else
                         {
+                            if (datestring != null)
+                            {
+                                Log.d(LOGTAG, "#### datestring=" + datestring);
+
+                                boolean isnewday = chat.isNewDay(datestring);
+                                chat.setLastDate(datestring);
+
+                                if (isnewday)
+                                {
+                                    cfrag = new ChatFragment(getContext(), chat);
+                                    cfrag.setContentInfo(chat.getLocaleDateString());
+
+                                    scrollContent.addView(cfrag);
+                                }
+                            }
+
                             boolean send = (username != null) && (username.equals("Dennis Zierahnowitsch"));
 
-                            cfrag = new ChatFragment(getContext());
+                            cfrag = new ChatFragment(getContext(), chat);
                             cfrag.setContent(send, datestring, username, attachment, line);
 
                             scrollContent.addView(cfrag);
